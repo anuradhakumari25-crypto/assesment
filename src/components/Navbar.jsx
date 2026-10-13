@@ -1,35 +1,27 @@
-import React, { useContext } from 'react'
-import { Link } from 'react-router-dom'
-import { CardContext } from '../contexts/CardContext'
+import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { CardContext } from "../contexts/CardContext";
 
 function Navbar() {
-
-  const { state } = useContext(CardContext)
+  const { state } = useContext(CardContext);
 
   const cartCount = state.cart.reduce(
     (total, item) => total + item.quantity,
     0
-  )
+  );
 
   return (
     <nav>
-      <Link to="/">
-        <button>Home</button>
-      </Link>
+      <NavLink to="/" className="brand">Tech Store</NavLink>
 
-      <Link to="checkout">
-        <button>Checkout</button>
-      </Link>
-
-      <Link to="product">
-        <button>ProductsDetails</button>
-      </Link>
-
-      <Link to="cart">
-        <button>Cart 🛒 ({cartCount})</button>
-      </Link>
+      <div className="nav-links">
+        <NavLink to="/" end>Home</NavLink>
+        <NavLink to="/checkout">
+          Cart 🛒 <span className="badge">{cartCount}</span>
+        </NavLink>
+      </div>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

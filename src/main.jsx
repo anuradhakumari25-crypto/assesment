@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { CardProvider } from './contexts/CardContext.jsx'
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <CardProvider>

@@ -17,7 +17,7 @@ function Checkout() {
   const totalPrice = useMemo(() => {
     return state.cart.reduce(
       (total, item) => total + item.price * item.quantity,
-      0
+      0,
     );
   }, [state.cart]);
 
@@ -34,87 +34,114 @@ function Checkout() {
   };
 
   return (
-    <div>
-      <h1>Checkout</h1>
+    <div className="page checkout">
+      <h1 className="page-title">Checkout</h1>
 
-      <h2>Total Price: ${totalPrice.toFixed(2)}</h2>
+      {successMessage && <div className="success">{successMessage}</div>}
 
-      {state.cart.map((item) => (
-        <div key={item.id}>
-          <img
-            src={item.image}
-            alt={item.title}
-            width="150"
-          />
-
-          <h3>{item.title}</h3>
-          <p>Price: ${item.price}</p>
-          <p>Quantity: {item.quantity}</p>
-        </div>
-      ))}
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Full Name */}
+      <div className="checkout-grid">
         <div>
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            {...register("fullName", {
-              required: "Full Name is required",
-              minLength: {
-                value: 3,
-                message: "Full Name must be at least 3 characters",
-              },
-            })}
-          />
+          <h2 className="section-title">Your items</h2>
 
-          {errors.fullName && (
-            <p>{errors.fullName.message}</p>
+          {state.cart.length === 0 ? (
+            <div className="cart-empty">
+              <p>Your cart is empty.</p>
+            </div>
+          ) : (
+            <div className="cart-list">
+              {state.cart.map((item) => (
+                <div className="cart-item" key={item.id}>
+                  <img src={item.thumbnail} alt={item.title} />
+
+                  <div className="cart-info">
+                    <h3>{item.title}</h3>
+                    <p className="cart-meta">
+                      ${item.price} &times; {item.quantity}
+                    </p>
+                  </div>
+
+                  <div className="cart-side">
+                    <strong className="cart-line-total">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </strong>
+                    <button
+                      type="button"
+                      className="btn danger small"
+                      onClick={() =>
+                        dispatch({
+                          type: "REMOVE_FROM_CART",
+                          payload: item.id,
+                        })
+                      }
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Email */}
         <div>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Please enter a valid email",
-              },
-            })}
-          />
+          <h2 className="section-title">Shipping details</h2>
 
-          {errors.email && (
-            <p>{errors.email.message}</p>
-          )}
+          <div className="total">
+            Total Price <span>${totalPrice.toFixed(2)}</span>
+          </div>
+
+          <form className="checkout-form" onSubmit={handleSubmit(onSubmit)}>
+            <div className="field">
+              <input
+                type="text"
+                placeholder="Enter your full name"
+                {...register("fullName", {
+                  required: "Full Name is required",
+                  minLength: {
+                    value: 3,
+                    message: "Full Name must be at least 3 characters",
+                  },
+                })}
+              />
+              {errors.fullName && (
+                <p className="error">{errors.fullName.message}</p>
+              )}
+            </div>
+
+            <div className="field">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Please enter a valid email",
+                  },
+                })}
+              />
+              {errors.email && <p className="error">{errors.email.message}</p>}
+            </div>
+
+            <div className="field">
+              <input
+                type="text"
+                placeholder="Enter your shipping address"
+                {...register("shippingAddress", {
+                  required: "Shipping Address is required",
+                })}
+              />
+              {errors.shippingAddress && (
+                <p className="error">{errors.shippingAddress.message}</p>
+              )}
+            </div>
+
+            <button className="btn" type="submit">
+              Place Order
+            </button>
+          </form>
         </div>
-
-        {/* Shipping Address */}
-        <div>
-          <input
-            type="text"
-            placeholder="Enter your shipping address"
-            {...register("shippingAddress", {
-              required: "Shipping Address is required",
-            })}
-          />
-
-          {errors.shippingAddress && (
-            <p>{errors.shippingAddress.message}</p>
-          )}
-        </div>
-
-        <button type="submit">
-          Place Order
-        </button>
-      </form>
-
-      {successMessage && (
-        <h2>{successMessage}</h2>
-      )}
+      </div>
     </div>
   );
 }
